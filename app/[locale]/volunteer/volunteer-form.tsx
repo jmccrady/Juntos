@@ -4,9 +4,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+type Region = { id: string; name_en: string; name_es: string }
+
 const copy = {
   en: {
-    region: 'Service area',
+    region: 'Primary service area',
+    noRegion: 'Not listed / enter a general area below',
+    regionFallback: 'General service area if not listed',
     regionHint: 'Example: Pasadena / Anne Arundel County',
     languages: 'Languages you can use with riders',
     english: 'English',
@@ -25,7 +29,9 @@ const copy = {
     privacy: 'Do not enter driver-license numbers, insurance policy numbers, immigration information, or other sensitive documents here.',
   },
   es: {
-    region: 'Área de servicio',
+    region: 'Área principal de servicio',
+    noRegion: 'No aparece / ingresa un área general abajo',
+    regionFallback: 'Área general de servicio si no aparece',
     regionHint: 'Ejemplo: Pasadena / Condado de Anne Arundel',
     languages: 'Idiomas que puedes usar con pasajeros',
     english: 'Inglés',
@@ -45,12 +51,14 @@ const copy = {
   },
 } as const
 
-export function VolunteerForm({ locale }: { locale: 'en' | 'es' }) {
+export function VolunteerForm({ locale, regions }: { locale: 'en' | 'es'; regions: Region[] }) {
   const t = copy[locale]
   const router = useRouter()
   const [pending, setPending] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  const regionName = (region: Region) => locale === 'es' ? region.name_es : region.name_en
 
   async function submit(formData: FormData) {
     setPending(true)
@@ -67,7 +75,10 @@ export function VolunteerForm({ locale }: { locale: 'en' | 'es' }) {
         return
       }
 
-      const serviceRegion = String(formData.get('service_region') ?? '').trim().slice(0, 120)
+      const serviceRegionId = String(formData.get('service_region_id') ?? '') || null
+      const selectedRegion = serviceRegionId ? regions.find((region) => region.id === serviceRegionId) ?? null : null
+      const fallbackRegion = String(formData.get('service_region') ?? '').trim().slice(0, 120)
+      const serviceRegion = selectedRegion ? regionName(selectedRegion) : fallbackRegion
       const make = String(formData.get('make') ?? '').trim().slice(0, 60)
       const model = String(formData.get('model') ?? '').trim().slice(0, 60)
       const color = String(formData.get('color') ?? '').trim().slice(0, 40)
@@ -77,7 +88,8 @@ export function VolunteerForm({ locale }: { locale: 'en' | 'es' }) {
       const wheelchairAccessible = formData.get('wheelchair_accessible') === 'on'
       const languages = ['en', 'es'].filter((language) => formData.get(`language_${language}`) === 'on')
 
-      if (!serviceRegion || !make || !model || !color || languages.length === 0 || !Number.isInteger(seatCapacity) || seatCapacity < 1 || seatCapacity > 12) {
+      const validRegion = !serviceRegionId || Boolean(selectedRegion)
+      if (!serviceRegion || !validRegion || !make || !model || !color || languages.length === 0 || !Number.isInteger(seatCapacity) || seatCapacity < 1 || seatCapacity > 12) {
         setMessage(t.error)
         return
       }
@@ -90,8 +102,8 @@ export function VolunteerForm({ locale }: { locale: 'en' | 'es' }) {
       const { error: profileError } = await supabase.from('driver_profiles').upsert({
         user_id: driverId,
         service_region: serviceRegion,
+        service_region_id: selectedRegion?.id ?? null,
         languages,
-        is_accepting_rides: false,
         updated_at: new Date().toISOString(),
       })
 
@@ -145,9 +157,18 @@ export function VolunteerForm({ locale }: { locale: 'en' | 'es' }) {
 
   return (
     <form className="form" action={submit}>
+      {regions.length > 0 ? (
+        <label>
+          {t.region}
+          <select name="service_region_id" defaultValue="">
+            <option value="">{t.noRegion}</option>
+            {regions.map((region) => <option key={region.id} value={region.id}>{regionName(region)}</option>)}
+          </select>
+        </label>
+      ) : null}
       <label>
-        {t.region}
-        <input name="service_region" maxLength={120} placeholder={t.regionHint} required />
+        {regions.length > 0 ? t.regionFallback : t.region}
+        <input name="service_region" maxLength={120} placeholder={t.regionHint} />
       </label>
 
       <fieldset className="fieldset">

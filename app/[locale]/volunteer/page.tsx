@@ -24,13 +24,19 @@ export default async function VolunteerPage({ params }: { params: Promise<{ loca
 
   if (error || !data?.claims?.sub) redirect(`/${lang}/login`)
 
+  const { data: regions } = await supabase
+    .from('service_regions')
+    .select('id,name_en,name_es')
+    .eq('active', true)
+    .order(lang === 'es' ? 'name_es' : 'name_en')
+
   return (
     <main className="shell narrow">
       <section className="panel">
         <p className="eyebrow">Juntos</p>
         <h1>{t.title}</h1>
         <p className="lead small">{t.body}</p>
-        <VolunteerForm locale={lang} />
+        <VolunteerForm locale={lang} regions={regions ?? []} />
       </section>
     </main>
   )
