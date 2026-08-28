@@ -112,3 +112,27 @@ export async function cancelRideAsCurrentUser(rideRequestId: string, reasonCode?
   if (error) throw new Error(error.message)
   return data
 }
+
+export async function savePrivateLocationAsCurrentUser(
+  rideRequestId: string,
+  pickupAddress: string,
+  destinationAddress: string,
+) {
+  assertUuid(rideRequestId, 'ride request')
+  const pickup = pickupAddress.trim()
+  const destination = destinationAddress.trim()
+  if (pickup.length > 240 || destination.length < 1 || destination.length > 240) {
+    throw new Error('Invalid private location')
+  }
+
+  const { actorId } = await currentActor()
+  const admin = createAdminClient()
+  const { error } = await admin.rpc('set_private_ride_location', {
+    p_actor_id: actorId,
+    p_ride_request_id: rideRequestId,
+    p_pickup_address: pickup,
+    p_destination_address: destination,
+  })
+
+  if (error) throw new Error(error.message)
+}
