@@ -32,8 +32,10 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .privacy-card { padding: 16px 18px; max-width: 670px; color: #4c5b52; }
 .panel { padding: clamp(24px, 5vw, 48px); }
 .panel h1 { font-size: clamp(38px, 7vw, 56px); }
+.panel h2 { margin-top: 0; }
 .section-title { margin: 10px 0 0; font-size: 22px; letter-spacing: -0.02em; }
 .form { display: grid; gap: 18px; margin-top: 30px; }
+.form.compact-form { margin-top: 18px; }
 .form label { display: grid; gap: 8px; font-weight: 750; }
 .form input, .form select, .form textarea { width: 100%; border: 1px solid #cfd7d1; background: #fcfcfa; border-radius: 12px; padding: 13px 14px; color: #18231c; }
 .form input:focus, .form select:focus, .form textarea:focus { outline: 3px solid rgba(40, 86, 60, 0.14); border-color: #28563c; }
@@ -61,6 +63,25 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .dispatch-main > div { display: grid; gap: 4px; }
 .dispatch-label { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #6a786f; }
 .dispatch-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #edf0ed; color: #526159; font-size: 14px; }
+.driver-shell { padding: 10px 0 60px; }
+.driver-shell > h1 { font-size: clamp(40px, 6vw, 62px); }
+.driver-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 18px; margin-top: 28px; }
+.driver-summary, .driver-availability-panel { padding: 28px; }
+.detail-list { display: grid; gap: 18px; margin: 0; }
+.detail-list > div { display: grid; gap: 4px; }
+.detail-list dt { color: #6a786f; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.detail-list dd { margin: 0; font-weight: 700; line-height: 1.45; }
+.availability-list-section { margin-top: 20px; }
+.availability-list { display: grid; gap: 10px; }
+.availability-card { display: grid; grid-template-columns: auto 24px auto 1fr; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid #dce1dc; border-radius: 14px; background: #fff; }
+.availability-card > span:last-child { justify-self: end; color: #526159; }
+
+@media (max-width: 760px) {
+  .driver-grid { grid-template-columns: 1fr; }
+  .availability-card { grid-template-columns: 1fr; gap: 5px; }
+  .availability-card > span:nth-child(2) { display: none; }
+  .availability-card > span:last-child { justify-self: start; }
+}
 
 @media (max-width: 640px) {
   .shell { padding: 18px; }
