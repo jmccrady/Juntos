@@ -2,15 +2,21 @@ export type Database = {
   public: {
     Tables: {
       driver_availability: {
-        Row: { id: string; driver_id: string; starts_at: string; ends_at: string; service_region: string | null; created_at: string }
-        Insert: { id?: string; driver_id: string; starts_at: string; ends_at: string; service_region?: string | null; created_at?: string }
-        Update: { id?: string; driver_id?: string; starts_at?: string; ends_at?: string; service_region?: string | null; created_at?: string }
+        Row: { id: string; driver_id: string; starts_at: string; ends_at: string; service_region: string | null; service_region_id: string | null; created_at: string }
+        Insert: { id?: string; driver_id: string; starts_at: string; ends_at: string; service_region?: string | null; service_region_id?: string | null; created_at?: string }
+        Update: { id?: string; driver_id?: string; starts_at?: string; ends_at?: string; service_region?: string | null; service_region_id?: string | null; created_at?: string }
         Relationships: []
       }
       driver_profiles: {
-        Row: { user_id: string; service_region: string | null; languages: string[]; is_accepting_rides: boolean; created_at: string; updated_at: string }
-        Insert: { user_id: string; service_region?: string | null; languages?: string[]; is_accepting_rides?: boolean; created_at?: string; updated_at?: string }
-        Update: { user_id?: string; service_region?: string | null; languages?: string[]; is_accepting_rides?: boolean; created_at?: string; updated_at?: string }
+        Row: { user_id: string; service_region: string | null; service_region_id: string | null; languages: string[]; is_accepting_rides: boolean; created_at: string; updated_at: string }
+        Insert: { user_id: string; service_region?: string | null; service_region_id?: string | null; languages?: string[]; is_accepting_rides?: boolean; created_at?: string; updated_at?: string }
+        Update: { user_id?: string; service_region?: string | null; service_region_id?: string | null; languages?: string[]; is_accepting_rides?: boolean; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      pickup_hubs: {
+        Row: { id: string; service_region_id: string; name_en: string; name_es: string; hub_type: string; address_text: string; instructions_en: string | null; instructions_es: string | null; active: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; service_region_id: string; name_en: string; name_es: string; hub_type?: string; address_text: string; instructions_en?: string | null; instructions_es?: string | null; active?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; service_region_id?: string; name_en?: string; name_es?: string; hub_type?: string; address_text?: string; instructions_en?: string | null; instructions_es?: string | null; active?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       profiles: {
@@ -26,9 +32,15 @@ export type Database = {
         Relationships: []
       }
       ride_requests: {
-        Row: { id: string; rider_id: string; pickup_area: string; destination_area: string; requested_at: string; rider_count: number; purpose: string | null; needs: string | null; status: Database['public']['Enums']['ride_status']; created_at: string }
-        Insert: { id?: string; rider_id: string; pickup_area: string; destination_area: string; requested_at: string; rider_count?: number; purpose?: string | null; needs?: string | null; status?: Database['public']['Enums']['ride_status']; created_at?: string }
-        Update: { id?: string; rider_id?: string; pickup_area?: string; destination_area?: string; requested_at?: string; rider_count?: number; purpose?: string | null; needs?: string | null; status?: Database['public']['Enums']['ride_status']; created_at?: string }
+        Row: { id: string; rider_id: string; pickup_area: string; destination_area: string; pickup_region_id: string | null; destination_region_id: string | null; pickup_hub_id: string | null; requested_at: string; rider_count: number; purpose: string | null; needs: string | null; status: Database['public']['Enums']['ride_status']; created_at: string }
+        Insert: { id?: string; rider_id: string; pickup_area: string; destination_area: string; pickup_region_id?: string | null; destination_region_id?: string | null; pickup_hub_id?: string | null; requested_at: string; rider_count?: number; purpose?: string | null; needs?: string | null; status?: Database['public']['Enums']['ride_status']; created_at?: string }
+        Update: { id?: string; rider_id?: string; pickup_area?: string; destination_area?: string; pickup_region_id?: string | null; destination_region_id?: string | null; pickup_hub_id?: string | null; requested_at?: string; rider_count?: number; purpose?: string | null; needs?: string | null; status?: Database['public']['Enums']['ride_status']; created_at?: string }
+        Relationships: []
+      }
+      service_regions: {
+        Row: { id: string; slug: string; name_en: string; name_es: string; active: boolean; created_at: string; updated_at: string }
+        Insert: { id?: string; slug: string; name_en: string; name_es: string; active?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; slug?: string; name_en?: string; name_es?: string; active?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       user_roles: {
