@@ -53,6 +53,14 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .ride-card > div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; }
 .ride-card strong { color: #506057; }
 .status-pill { width: fit-content; padding: 4px 9px; border-radius: 999px; background: #edf3ee; font-size: 13px; font-weight: 800; text-transform: capitalize; }
+.dispatch-shell { padding: 10px 0 60px; }
+.dispatch-shell h1 { font-size: clamp(38px, 6vw, 58px); }
+.dispatch-list { display: grid; gap: 14px; margin-top: 28px; }
+.dispatch-card { padding: 20px; border: 1px solid #dce1dc; border-radius: 18px; background: #fff; box-shadow: 0 10px 30px rgba(35, 55, 43, 0.045); }
+.dispatch-main { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.dispatch-main > div { display: grid; gap: 4px; }
+.dispatch-label { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #6a786f; }
+.dispatch-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #edf0ed; color: #526159; font-size: 14px; }
 
 @media (max-width: 640px) {
   .shell { padding: 18px; }
@@ -63,4 +71,5 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
   .form-grid { grid-template-columns: 1fr; }
   .dashboard-heading { align-items: flex-start; flex-direction: column; }
   .ride-card > div { grid-template-columns: 1fr; gap: 4px; }
+  .dispatch-main { grid-template-columns: 1fr; }
 }
