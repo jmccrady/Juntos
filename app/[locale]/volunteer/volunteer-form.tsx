@@ -104,7 +104,6 @@ export function VolunteerForm({ locale, regions }: { locale: 'en' | 'es'; region
         service_region: serviceRegion,
         service_region_id: selectedRegion?.id ?? null,
         languages,
-        is_accepting_rides: false,
         updated_at: new Date().toISOString(),
       })
 
