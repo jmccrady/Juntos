@@ -25,6 +25,24 @@ export type Database = {
         Update: { id?: string; display_name?: string | null; preferred_language?: string; created_at?: string }
         Relationships: []
       }
+      ride_assignments: {
+        Row: { id: string; ride_request_id: string; driver_id: string; vehicle_id: string; assigned_by: string; status: Database['public']['Enums']['ride_assignment_status']; assigned_at: string; responded_at: string | null; completed_at: string | null; updated_at: string }
+        Insert: { id?: string; ride_request_id: string; driver_id: string; vehicle_id: string; assigned_by: string; status?: Database['public']['Enums']['ride_assignment_status']; assigned_at?: string; responded_at?: string | null; completed_at?: string | null; updated_at?: string }
+        Update: { id?: string; ride_request_id?: string; driver_id?: string; vehicle_id?: string; assigned_by?: string; status?: Database['public']['Enums']['ride_assignment_status']; assigned_at?: string; responded_at?: string | null; completed_at?: string | null; updated_at?: string }
+        Relationships: []
+      }
+      ride_candidates: {
+        Row: { ride_request_id: string; driver_id: string; vehicle_id: string; availability_id: string; driver_display_name: string; vehicle_label: string; seat_capacity: number; languages: string[]; language_match: boolean; capacity_margin: number; score: number; match_rank: number; generated_at: string }
+        Insert: { ride_request_id: string; driver_id: string; vehicle_id: string; availability_id: string; driver_display_name: string; vehicle_label: string; seat_capacity: number; languages: string[]; language_match: boolean; capacity_margin: number; score: number; match_rank: number; generated_at?: string }
+        Update: { ride_request_id?: string; driver_id?: string; vehicle_id?: string; availability_id?: string; driver_display_name?: string; vehicle_label?: string; seat_capacity?: number; languages?: string[]; language_match?: boolean; capacity_margin?: number; score?: number; match_rank?: number; generated_at?: string }
+        Relationships: []
+      }
+      ride_events: {
+        Row: { id: number; ride_request_id: string; actor_id: string | null; event_type: string; old_status: Database['public']['Enums']['ride_status'] | null; new_status: Database['public']['Enums']['ride_status'] | null; reason_code: string | null; created_at: string }
+        Insert: { id?: never; ride_request_id: string; actor_id?: string | null; event_type: string; old_status?: Database['public']['Enums']['ride_status'] | null; new_status?: Database['public']['Enums']['ride_status'] | null; reason_code?: string | null; created_at?: string }
+        Update: { id?: never; ride_request_id?: string; actor_id?: string | null; event_type?: string; old_status?: Database['public']['Enums']['ride_status'] | null; new_status?: Database['public']['Enums']['ride_status'] | null; reason_code?: string | null; created_at?: string }
+        Relationships: []
+      }
       ride_private_locations: {
         Row: { ride_request_id: string; rider_id: string; pickup_address: string | null; destination_address: string | null; retained_until: string }
         Insert: { ride_request_id: string; rider_id: string; pickup_address?: string | null; destination_address?: string | null; retained_until?: string }
@@ -57,9 +75,16 @@ export type Database = {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      refresh_ride_candidates: { Args: { p_actor_id: string; p_ride_request_id: string }; Returns: number }
+      assign_ride: { Args: { p_actor_id: string; p_ride_request_id: string; p_driver_id: string }; Returns: string }
+      respond_to_ride_offer: { Args: { p_actor_id: string; p_ride_request_id: string; p_accept: boolean }; Returns: Database['public']['Enums']['ride_status'] }
+      advance_ride: { Args: { p_actor_id: string; p_ride_request_id: string; p_target: Database['public']['Enums']['ride_status'] }; Returns: Database['public']['Enums']['ride_status'] }
+      cancel_ride: { Args: { p_actor_id: string; p_ride_request_id: string; p_reason_code?: string }; Returns: Database['public']['Enums']['ride_status'] }
+    }
     Enums: {
       app_role: 'rider' | 'driver' | 'dispatcher' | 'admin'
+      ride_assignment_status: 'offered' | 'accepted' | 'declined' | 'cancelled' | 'completed'
       ride_status: 'requested' | 'matched' | 'accepted' | 'arrived' | 'in_progress' | 'completed' | 'cancelled'
     }
     CompositeTypes: Record<string, never>
