@@ -18,13 +18,26 @@ export default async function RideRequestPage({ params }: { params: Promise<{ lo
 
   if (error || !data?.claims?.sub) redirect(`/${lang}/login`)
 
+  const [{ data: regions }, { data: hubs }] = await Promise.all([
+    supabase
+      .from('service_regions')
+      .select('id,name_en,name_es')
+      .eq('active', true)
+      .order(lang === 'es' ? 'name_es' : 'name_en'),
+    supabase
+      .from('pickup_hubs')
+      .select('id,service_region_id,name_en,name_es,address_text')
+      .eq('active', true)
+      .order(lang === 'es' ? 'name_es' : 'name_en'),
+  ])
+
   return (
     <main className="shell narrow">
       <section className="panel">
         <p className="eyebrow">Juntos</p>
         <h1>{t.title}</h1>
         <p className="lead small">{t.subtitle}</p>
-        <RideRequestForm locale={lang} />
+        <RideRequestForm locale={lang} regions={regions ?? []} hubs={hubs ?? []} />
       </section>
     </main>
   )
