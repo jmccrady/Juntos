@@ -46,13 +46,13 @@ export default async function DriverPage({ params }: { params: Promise<{ locale:
 
   const { data: profile, error: profileError } = await supabase
     .from('driver_profiles')
-    .select('service_region,languages,is_accepting_rides')
+    .select('service_region,service_region_id,languages,is_accepting_rides')
     .eq('user_id', userId)
     .maybeSingle()
 
   if (profileError || !profile) redirect(`/${lang}/volunteer`)
 
-  const [{ data: vehicle }, { data: availability, error: availabilityError }] = await Promise.all([
+  const [{ data: vehicle }, { data: availability, error: availabilityError }, { data: regions }] = await Promise.all([
     supabase
       .from('vehicles')
       .select('id,make,model,color,model_year,seat_capacity,wheelchair_accessible')
@@ -62,12 +62,24 @@ export default async function DriverPage({ params }: { params: Promise<{ locale:
       .maybeSingle(),
     supabase
       .from('driver_availability')
-      .select('id,starts_at,ends_at,service_region')
+      .select('id,starts_at,ends_at,service_region,service_region_id')
       .eq('driver_id', userId)
       .gte('ends_at', new Date().toISOString())
       .order('starts_at', { ascending: true })
       .limit(20),
+    supabase
+      .from('service_regions')
+      .select('id,name_en,name_es')
+      .eq('active', true)
+      .order(lang === 'es' ? 'name_es' : 'name_en'),
   ])
+
+  const activeRegions = regions ?? []
+  const regionName = (regionId: string | null, fallback: string | null) => {
+    const region = activeRegions.find((candidate) => candidate.id === regionId)
+    if (!region) return fallback ?? '—'
+    return lang === 'es' ? region.name_es : region.name_en
+  }
 
   return (
     <main className="shell">
@@ -88,7 +100,7 @@ export default async function DriverPage({ params }: { params: Promise<{ locale:
           <section className="panel driver-summary">
             <h2>{t.profile}</h2>
             <dl className="detail-list">
-              <div><dt>{t.region}</dt><dd>{profile.service_region ?? '—'}</dd></div>
+              <div><dt>{t.region}</dt><dd>{regionName(profile.service_region_id, profile.service_region)}</dd></div>
               <div><dt>{t.languages}</dt><dd>{profile.languages.join(', ')}</dd></div>
               <div>
                 <dt>{t.vehicle}</dt>
@@ -99,7 +111,12 @@ export default async function DriverPage({ params }: { params: Promise<{ locale:
 
           <section className="panel driver-availability-panel">
             <h2>{t.availability}</h2>
-            <AvailabilityForm locale={lang} defaultRegion={profile.service_region ?? ''} />
+            <AvailabilityForm
+              locale={lang}
+              defaultRegion={profile.service_region ?? ''}
+              defaultRegionId={profile.service_region_id}
+              regions={activeRegions}
+            />
           </section>
         </div>
 
@@ -112,7 +129,7 @@ export default async function DriverPage({ params }: { params: Promise<{ locale:
                 <strong>{new Date(window.starts_at).toLocaleString(lang === 'es' ? 'es-US' : 'en-US')}</strong>
                 <span>→</span>
                 <strong>{new Date(window.ends_at).toLocaleString(lang === 'es' ? 'es-US' : 'en-US')}</strong>
-                <span>{window.service_region ?? profile.service_region ?? '—'}</span>
+                <span>{regionName(window.service_region_id, window.service_region ?? profile.service_region)}</span>
               </article>
             ))}
           </div>
