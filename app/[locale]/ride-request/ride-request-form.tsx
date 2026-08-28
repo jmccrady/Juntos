@@ -6,10 +6,38 @@ import { createClient } from '@/lib/supabase/client'
 
 const labels = {
   en: {
-    pickup: 'Pickup area or trusted hub', destination: 'Destination', date: 'Date', time: 'Pickup time', riders: 'Number of riders', purpose: 'Trip purpose', notes: 'Accessibility, child seat, or other needs', submit: 'Submit ride request', submitting: 'Submitting…', error: 'We could not save your ride request. Please try again.', signIn: 'Please sign in before requesting a ride.', purposes: ['Work', 'Doctor', 'Grocery', 'Church', 'School', 'Legal appointment', 'Other'],
+    pickup: 'Pickup area or trusted hub',
+    pickupPlaceholder: 'Example: Pasadena or a community pickup hub',
+    destination: 'Destination area or place',
+    destinationPlaceholder: 'Example: Glen Burnie or a medical center',
+    date: 'Date',
+    time: 'Pickup time',
+    riders: 'Number of riders',
+    purpose: 'Trip purpose',
+    notes: 'Accessibility, child seat, or other needs',
+    privacy: 'For this first request, do not enter a home street address or other exact private location. Juntos will request exact pickup details only when they are operationally needed.',
+    submit: 'Submit ride request',
+    submitting: 'Submitting…',
+    error: 'We could not save your ride request. Please try again.',
+    signIn: 'Please sign in before requesting a ride.',
+    purposes: ['Work', 'Doctor', 'Grocery', 'Church', 'School', 'Legal appointment', 'Other'],
   },
   es: {
-    pickup: 'Área de recogida o punto comunitario', destination: 'Destino', date: 'Fecha', time: 'Hora de recogida', riders: 'Número de pasajeros', purpose: 'Motivo del viaje', notes: 'Accesibilidad, asiento infantil u otras necesidades', submit: 'Enviar solicitud', submitting: 'Enviando…', error: 'No pudimos guardar tu solicitud. Inténtalo de nuevo.', signIn: 'Inicia sesión antes de solicitar un viaje.', purposes: ['Trabajo', 'Médico', 'Supermercado', 'Iglesia', 'Escuela', 'Cita legal', 'Otro'],
+    pickup: 'Área de recogida o punto comunitario',
+    pickupPlaceholder: 'Ejemplo: Pasadena o un punto comunitario',
+    destination: 'Área o lugar de destino',
+    destinationPlaceholder: 'Ejemplo: Glen Burnie o un centro médico',
+    date: 'Fecha',
+    time: 'Hora de recogida',
+    riders: 'Número de pasajeros',
+    purpose: 'Motivo del viaje',
+    notes: 'Accesibilidad, asiento infantil u otras necesidades',
+    privacy: 'En esta primera solicitud, no ingreses la dirección exacta de tu casa ni otra ubicación privada. Juntos solicitará los detalles exactos solo cuando sean necesarios para coordinar el viaje.',
+    submit: 'Enviar solicitud',
+    submitting: 'Enviando…',
+    error: 'No pudimos guardar tu solicitud. Inténtalo de nuevo.',
+    signIn: 'Inicia sesión antes de solicitar un viaje.',
+    purposes: ['Trabajo', 'Médico', 'Supermercado', 'Iglesia', 'Escuela', 'Cita legal', 'Otro'],
   },
 } as const
 
@@ -77,8 +105,9 @@ export function RideRequestForm({ locale }: { locale: 'en' | 'es' }) {
 
   return (
     <form className="form" action={submit}>
-      <label>{t.pickup}<input name="pickup_area" maxLength={200} required autoComplete="street-address" /></label>
-      <label>{t.destination}<input name="destination" maxLength={200} required /></label>
+      <label>{t.pickup}<input name="pickup_area" maxLength={200} placeholder={t.pickupPlaceholder} required /></label>
+      <label>{t.destination}<input name="destination" maxLength={200} placeholder={t.destinationPlaceholder} required /></label>
+      <div className="privacy-note">🔒 {t.privacy}</div>
       <div className="form-grid">
         <label>{t.date}<input name="date" type="date" required /></label>
         <label>{t.time}<input name="time" type="time" required /></label>
