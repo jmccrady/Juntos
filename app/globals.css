@@ -34,10 +34,22 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .form input, .form select, .form textarea { width: 100%; border: 1px solid #cfd7d1; background: #fcfcfa; border-radius: 12px; padding: 13px 14px; color: #18231c; }
 .form input:focus, .form select:focus, .form textarea:focus { outline: 3px solid rgba(40, 86, 60, 0.14); border-color: #28563c; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.notice { margin: 20px 0; padding: 14px 16px; border: 1px solid #d9dfda; border-radius: 12px; background: #f8faf8; color: #45544b; }
+.notice.success { border-color: #b9d4c1; background: #f0f8f2; }
+.notice.error { border-color: #e1baba; background: #fff5f5; color: #7d3030; }
+.dashboard-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.dashboard-heading h1 { margin-bottom: 0; }
+.ride-list { display: grid; gap: 14px; margin-top: 28px; }
+.ride-card { display: grid; gap: 12px; padding: 18px; border: 1px solid #dce1dc; border-radius: 16px; background: #fbfcfa; }
+.ride-card > div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; }
+.ride-card strong { color: #506057; }
+.status-pill { width: fit-content; padding: 4px 9px; border-radius: 999px; background: #edf3ee; font-size: 13px; font-weight: 800; text-transform: capitalize; }
 
 @media (max-width: 640px) {
   .shell { padding: 18px; }
   .hero { padding-top: 6vh; }
   .actions { display: grid; }
   .form-grid { grid-template-columns: 1fr; }
+  .dashboard-heading { align-items: flex-start; flex-direction: column; }
+  .ride-card > div { grid-template-columns: 1fr; gap: 4px; }
 }
