@@ -81,6 +81,7 @@ export type Database = {
       respond_to_ride_offer: { Args: { p_actor_id: string; p_ride_request_id: string; p_accept: boolean }; Returns: Database['public']['Enums']['ride_status'] }
       advance_ride: { Args: { p_actor_id: string; p_ride_request_id: string; p_target: Database['public']['Enums']['ride_status'] }; Returns: Database['public']['Enums']['ride_status'] }
       cancel_ride: { Args: { p_actor_id: string; p_ride_request_id: string; p_reason_code?: string }; Returns: Database['public']['Enums']['ride_status'] }
+      set_private_ride_location: { Args: { p_actor_id: string; p_ride_request_id: string; p_pickup_address: string; p_destination_address: string }; Returns: undefined }
     }
     Enums: {
       app_role: 'rider' | 'driver' | 'dispatcher' | 'admin'
