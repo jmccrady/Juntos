@@ -87,6 +87,16 @@ export function AvailabilityForm({
         return
       }
 
+      const { error: profileError } = await supabase
+        .from('driver_profiles')
+        .update({ is_accepting_rides: true, updated_at: new Date().toISOString() })
+        .eq('user_id', driverId)
+
+      if (profileError) {
+        setMessage(t.error)
+        return
+      }
+
       router.refresh()
     } finally {
       setPending(false)
