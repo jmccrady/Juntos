@@ -90,6 +90,17 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .availability-list { display: grid; gap: 10px; }
 .availability-card { display: grid; grid-template-columns: auto 24px auto 1fr; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid #dce1dc; border-radius: 14px; background: #fff; }
 .availability-card > span:last-child { justify-self: end; color: #526159; }
+.admin-shell { padding: 10px 0 60px; }
+.admin-shell > h1 { font-size: clamp(40px, 6vw, 62px); }
+.admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 28px; align-items: start; }
+.config-list { display: grid; gap: 10px; margin-top: 22px; }
+.config-card { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 14px; border: 1px solid #dce1dc; border-radius: 14px; background: #f9fbf9; }
+.config-card > div { display: grid; gap: 4px; min-width: 0; }
+.config-card span { color: #526159; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+
+@media (max-width: 900px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 760px) {
   .driver-grid { grid-template-columns: 1fr; }
@@ -109,4 +120,5 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
   .dashboard-heading { align-items: flex-start; flex-direction: column; }
   .ride-card > div { grid-template-columns: 1fr; gap: 4px; }
   .dispatch-main { grid-template-columns: 1fr; }
+  .config-card { flex-direction: column; }
 }
