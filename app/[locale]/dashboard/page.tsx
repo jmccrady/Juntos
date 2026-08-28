@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { cancelOwnRideAction } from './actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,7 @@ const copy = {
     destination: 'Destination',
     when: 'When',
     status: 'Status',
+    cancel: 'Cancel ride',
   },
   es: {
     title: 'Mis viajes',
@@ -24,6 +26,7 @@ const copy = {
     destination: 'Destino',
     when: 'Cuándo',
     status: 'Estado',
+    cancel: 'Cancelar viaje',
   },
 } as const
 
@@ -66,6 +69,13 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
               <div><strong>{t.destination}</strong><span>{ride.destination_area}</span></div>
               <div><strong>{t.when}</strong><span>{new Date(ride.requested_at).toLocaleString(lang === 'es' ? 'es-US' : 'en-US')}</span></div>
               <div><strong>{t.status}</strong><span className="status-pill">{ride.status}</span></div>
+              {['requested', 'matched', 'accepted'].includes(ride.status) ? (
+                <form action={cancelOwnRideAction} className="inline-form">
+                  <input type="hidden" name="locale" value={lang} />
+                  <input type="hidden" name="ride_request_id" value={ride.id} />
+                  <button className="nav-button danger-action" type="submit">{t.cancel}</button>
+                </form>
+              ) : null}
             </article>
           ))}
         </div>
