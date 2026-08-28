@@ -18,6 +18,7 @@ button, input, select, textarea { font: inherit; }
 .brand { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
 .language { font-weight: 700; color: #28563c; }
 .nav-button { appearance: none; border: 0; padding: 0; background: transparent; color: #28563c; font-weight: 700; cursor: pointer; }
+.danger-action { color: #8a3535; }
 .hero { padding: 10vh 0 6vh; max-width: 800px; }
 .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800; font-size: 13px; color: #50725e; }
 h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05em; margin: 14px 0 22px; }
@@ -28,6 +29,9 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .button.primary { background: #28563c; color: white; }
 .button.secondary { background: white; color: #28563c; }
 .button:disabled { opacity: 0.62; cursor: progress; }
+.compact-button { min-height: 40px; padding: 0 14px; border-radius: 11px; font-size: 14px; }
+.inline-form { margin-top: 14px; }
+.action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .privacy-card, .panel { background: #fff; border: 1px solid #dce1dc; border-radius: 22px; box-shadow: 0 16px 50px rgba(35, 55, 43, 0.07); }
 .privacy-card { padding: 16px 18px; max-width: 670px; color: #4c5b52; }
 .panel { padding: clamp(24px, 5vw, 48px); }
@@ -63,6 +67,14 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .dispatch-main > div { display: grid; gap: 4px; }
 .dispatch-label { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #6a786f; }
 .dispatch-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #edf0ed; color: #526159; font-size: 14px; }
+.dispatch-candidates { margin-top: 20px; padding-top: 18px; border-top: 1px solid #edf0ed; }
+.dispatch-candidates h3 { margin: 18px 0 10px; }
+.candidate-list { display: grid; gap: 10px; }
+.candidate-card { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px; border: 1px solid #dce1dc; border-radius: 14px; background: #f9fbf9; }
+.candidate-card > div { display: grid; gap: 4px; }
+.candidate-card span { color: #526159; font-size: 14px; }
+.assignment-card { display: grid; gap: 5px; margin-top: 18px; padding: 14px; border-radius: 14px; background: #f1f6f2; border: 1px solid #d5e2d8; }
+.assignment-card span { color: #526159; font-size: 14px; }
 .driver-shell { padding: 10px 0 60px; }
 .driver-shell > h1 { font-size: clamp(40px, 6vw, 62px); }
 .driver-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 18px; margin-top: 28px; }
@@ -71,6 +83,9 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .detail-list > div { display: grid; gap: 4px; }
 .detail-list dt { color: #6a786f; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
 .detail-list dd { margin: 0; font-weight: 700; line-height: 1.45; }
+.ride-offers-section { margin: 28px 0 20px; }
+.driver-ride-list { display: grid; gap: 14px; margin-top: 16px; }
+.driver-ride-card { padding: 20px; border: 1px solid #dce1dc; border-radius: 18px; background: #fff; box-shadow: 0 10px 30px rgba(35, 55, 43, 0.045); }
 .availability-list-section { margin-top: 20px; }
 .availability-list { display: grid; gap: 10px; }
 .availability-card { display: grid; grid-template-columns: auto 24px auto 1fr; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid #dce1dc; border-radius: 14px; background: #fff; }
@@ -81,6 +96,7 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
   .availability-card { grid-template-columns: 1fr; gap: 5px; }
   .availability-card > span:nth-child(2) { display: none; }
   .availability-card > span:last-child { justify-self: start; }
+  .candidate-card { align-items: flex-start; flex-direction: column; }
 }
 
 @media (max-width: 640px) {
