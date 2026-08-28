@@ -4,10 +4,18 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+type Region = { id: string; name_en: string; name_es: string }
+type Hub = { id: string; service_region_id: string; name_en: string; name_es: string; address_text: string }
+
 const labels = {
   en: {
-    pickup: 'Pickup area or trusted hub',
-    pickupPlaceholder: 'Example: Pasadena or a community pickup hub',
+    pickupHub: 'Trusted pickup hub (optional)',
+    noHub: 'I am not using a trusted hub',
+    pickupRegion: 'Pickup service area (optional)',
+    destinationRegion: 'Destination service area (optional)',
+    noRegion: 'Choose later / not listed',
+    pickup: 'General pickup area if not using a hub',
+    pickupPlaceholder: 'Example: Pasadena — do not enter a home street address',
     destination: 'Destination area or place',
     destinationPlaceholder: 'Example: Glen Burnie or a medical center',
     date: 'Date',
@@ -15,7 +23,7 @@ const labels = {
     riders: 'Number of riders',
     purpose: 'Trip purpose',
     notes: 'Accessibility, child seat, or other needs',
-    privacy: 'For this first request, do not enter a home street address or other exact private location. Juntos will request exact pickup details only when they are operationally needed.',
+    privacy: 'Do not enter a home street address or another exact private location here. Trusted hub addresses are public operational locations; private pickup details will be requested only when needed for an assigned ride.',
     submit: 'Submit ride request',
     submitting: 'Submitting…',
     error: 'We could not save your ride request. Please try again.',
@@ -23,8 +31,13 @@ const labels = {
     purposes: ['Work', 'Doctor', 'Grocery', 'Church', 'School', 'Legal appointment', 'Other'],
   },
   es: {
-    pickup: 'Área de recogida o punto comunitario',
-    pickupPlaceholder: 'Ejemplo: Pasadena o un punto comunitario',
+    pickupHub: 'Punto de recogida de confianza (opcional)',
+    noHub: 'No usaré un punto comunitario',
+    pickupRegion: 'Área de servicio de recogida (opcional)',
+    destinationRegion: 'Área de servicio de destino (opcional)',
+    noRegion: 'Elegir después / no aparece',
+    pickup: 'Área general de recogida si no usas un punto comunitario',
+    pickupPlaceholder: 'Ejemplo: Pasadena — no ingreses la dirección exacta de tu casa',
     destination: 'Área o lugar de destino',
     destinationPlaceholder: 'Ejemplo: Glen Burnie o un centro médico',
     date: 'Fecha',
@@ -32,7 +45,7 @@ const labels = {
     riders: 'Número de pasajeros',
     purpose: 'Motivo del viaje',
     notes: 'Accesibilidad, asiento infantil u otras necesidades',
-    privacy: 'En esta primera solicitud, no ingreses la dirección exacta de tu casa ni otra ubicación privada. Juntos solicitará los detalles exactos solo cuando sean necesarios para coordinar el viaje.',
+    privacy: 'No ingreses la dirección exacta de tu casa ni otra ubicación privada aquí. Las direcciones de puntos comunitarios son ubicaciones operativas públicas; los detalles privados se solicitarán solo cuando sean necesarios para un viaje asignado.',
     submit: 'Enviar solicitud',
     submitting: 'Enviando…',
     error: 'No pudimos guardar tu solicitud. Inténtalo de nuevo.',
@@ -41,11 +54,16 @@ const labels = {
   },
 } as const
 
-export function RideRequestForm({ locale }: { locale: 'en' | 'es' }) {
+export function RideRequestForm({ locale, regions, hubs }: { locale: 'en' | 'es'; regions: Region[]; hubs: Hub[] }) {
   const t = labels[locale]
   const router = useRouter()
   const [pending, setPending] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const [selectedHubId, setSelectedHubId] = useState('')
+
+  const selectedHub = hubs.find((hub) => hub.id === selectedHubId) ?? null
+  const nameForRegion = (region: Region) => locale === 'es' ? region.name_es : region.name_en
+  const nameForHub = (hub: Hub) => locale === 'es' ? hub.name_es : hub.name_en
 
   async function submit(formData: FormData) {
     setPending(true)
@@ -62,7 +80,13 @@ export function RideRequestForm({ locale }: { locale: 'en' | 'es' }) {
         return
       }
 
-      const pickupArea = String(formData.get('pickup_area') ?? '').trim().slice(0, 200)
+      const hubId = String(formData.get('pickup_hub_id') ?? '')
+      const hub = hubs.find((candidate) => candidate.id === hubId) ?? null
+      const selectedPickupRegionId = String(formData.get('pickup_region_id') ?? '') || null
+      const destinationRegionId = String(formData.get('destination_region_id') ?? '') || null
+      const pickupAreaInput = String(formData.get('pickup_area') ?? '').trim().slice(0, 200)
+      const pickupArea = hub ? nameForHub(hub) : pickupAreaInput
+      const pickupRegionId = hub?.service_region_id ?? selectedPickupRegionId
       const destinationArea = String(formData.get('destination') ?? '').trim().slice(0, 200)
       const date = String(formData.get('date') ?? '')
       const time = String(formData.get('time') ?? '')
@@ -70,7 +94,10 @@ export function RideRequestForm({ locale }: { locale: 'en' | 'es' }) {
       const purpose = String(formData.get('purpose') ?? '').trim().slice(0, 80) || null
       const needs = String(formData.get('needs') ?? '').trim().slice(0, 500) || null
 
-      if (!pickupArea || !destinationArea || !date || !time || !Number.isInteger(riderCount) || riderCount < 1 || riderCount > 8) {
+      const validPickupRegion = !pickupRegionId || regions.some((region) => region.id === pickupRegionId)
+      const validDestinationRegion = !destinationRegionId || regions.some((region) => region.id === destinationRegionId)
+
+      if (!pickupArea || !destinationArea || !date || !time || !validPickupRegion || !validDestinationRegion || !Number.isInteger(riderCount) || riderCount < 1 || riderCount > 8) {
         setMessage(t.error)
         return
       }
@@ -85,6 +112,9 @@ export function RideRequestForm({ locale }: { locale: 'en' | 'es' }) {
         rider_id: riderId,
         pickup_area: pickupArea,
         destination_area: destinationArea,
+        pickup_region_id: pickupRegionId,
+        destination_region_id: destinationRegionId,
+        pickup_hub_id: hub?.id ?? null,
         requested_at: requestedAt.toISOString(),
         rider_count: riderCount,
         purpose,
@@ -105,7 +135,43 @@ export function RideRequestForm({ locale }: { locale: 'en' | 'es' }) {
 
   return (
     <form className="form" action={submit}>
-      <label>{t.pickup}<input name="pickup_area" maxLength={200} placeholder={t.pickupPlaceholder} required /></label>
+      {hubs.length > 0 ? (
+        <label>
+          {t.pickupHub}
+          <select name="pickup_hub_id" value={selectedHubId} onChange={(event) => setSelectedHubId(event.target.value)}>
+            <option value="">{t.noHub}</option>
+            {hubs.map((hub) => <option key={hub.id} value={hub.id}>{nameForHub(hub)} · {hub.address_text}</option>)}
+          </select>
+        </label>
+      ) : null}
+
+      {!selectedHub ? (
+        <>
+          {regions.length > 0 ? (
+            <label>
+              {t.pickupRegion}
+              <select name="pickup_region_id" defaultValue="">
+                <option value="">{t.noRegion}</option>
+                {regions.map((region) => <option key={region.id} value={region.id}>{nameForRegion(region)}</option>)}
+              </select>
+            </label>
+          ) : null}
+          <label>{t.pickup}<input name="pickup_area" maxLength={200} placeholder={t.pickupPlaceholder} required /></label>
+        </>
+      ) : (
+        <div className="privacy-note"><strong>{nameForHub(selectedHub)}</strong><br />{selectedHub.address_text}</div>
+      )}
+
+      {regions.length > 0 ? (
+        <label>
+          {t.destinationRegion}
+          <select name="destination_region_id" defaultValue="">
+            <option value="">{t.noRegion}</option>
+            {regions.map((region) => <option key={region.id} value={region.id}>{nameForRegion(region)}</option>)}
+          </select>
+        </label>
+      ) : null}
+
       <label>{t.destination}<input name="destination" maxLength={200} placeholder={t.destinationPlaceholder} required /></label>
       <div className="privacy-note">🔒 {t.privacy}</div>
       <div className="form-grid">
