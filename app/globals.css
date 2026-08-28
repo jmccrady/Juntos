@@ -13,9 +13,11 @@ button, input, select, textarea { font: inherit; }
 
 .shell { min-height: 100vh; padding: 24px; max-width: 1120px; margin: 0 auto; }
 .shell.narrow { max-width: 760px; display: grid; align-items: center; }
-.nav { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 32px; }
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 8px 0 32px; }
+.nav-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 18px; }
 .brand { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; }
 .language { font-weight: 700; color: #28563c; }
+.nav-button { appearance: none; border: 0; padding: 0; background: transparent; color: #28563c; font-weight: 700; cursor: pointer; }
 .hero { padding: 10vh 0 6vh; max-width: 800px; }
 .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800; font-size: 13px; color: #50725e; }
 h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05em; margin: 14px 0 22px; }
@@ -25,6 +27,7 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 .button { display: inline-flex; justify-content: center; align-items: center; min-height: 54px; border-radius: 15px; padding: 0 22px; border: 1px solid #28563c; cursor: pointer; font-weight: 800; }
 .button.primary { background: #28563c; color: white; }
 .button.secondary { background: white; color: #28563c; }
+.button:disabled { opacity: 0.62; cursor: progress; }
 .privacy-card, .panel { background: #fff; border: 1px solid #dce1dc; border-radius: 22px; box-shadow: 0 16px 50px rgba(35, 55, 43, 0.07); }
 .privacy-card { padding: 16px 18px; max-width: 670px; color: #4c5b52; }
 .panel { padding: clamp(24px, 5vw, 48px); }
@@ -47,6 +50,8 @@ h1 { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.05
 
 @media (max-width: 640px) {
   .shell { padding: 18px; }
+  .nav { align-items: flex-start; }
+  .nav-actions { gap: 12px; }
   .hero { padding-top: 6vh; }
   .actions { display: grid; }
   .form-grid { grid-template-columns: 1fr; }
